@@ -43,10 +43,9 @@ class preprocessing_training:
         self.df['Age_group_codes'] = self.df['Age_group'].cat.codes
 
         # label categories features
-        label_target = ['Gender', 'Vehicle_Damage','Vehicle_Age']
+        label_target = ['Gender', 'Vehicle_Damage', 'Vehicle_Age']
 
         self.df, mapping_list = self.label_encoding_feature(label_target)
-
 
         # add special_region
         self.df['special_region'] = 0
@@ -72,7 +71,9 @@ class preprocessing_training:
 
         # add interesting_score
         self.df['interesting_score'] = 1.5*self.df['Vehicle_Damage'] - \
-            2*self.df['Previously_Insured'] +0.5*self.df['Driving_License'] + 0.5*self.df['Gender'] - self.df['Vehicle_Age'] + self.df['special_region'] + self.df['special_Policy_Sales_Channel']
+            2*self.df['Previously_Insured'] + 0.5*self.df['Driving_License'] + 0.5*self.df['Gender'] - \
+            self.df['Vehicle_Age'] + self.df['special_region'] + \
+            self.df['special_Policy_Sales_Channel']
         # add annual_std
         self.df['Annual_log_std'] = np.log1p(self.df['Annual_Premium'])
 
@@ -97,7 +98,7 @@ class preprocessing_training:
         minmax1 = MinMaxScaler()
         samiliar_cluster = minmax1.fit_transform(
             np.array(self.df[[
-                'Annual_Premium', 'Gender', 'Vintage','Vehicle_Age'
+                'Annual_Premium', 'Gender', 'Vintage', 'Vehicle_Age'
             ]]))
         GMcluster = mixture.GaussianMixture(n_components=2,
                                             covariance_type='full',
@@ -164,11 +165,10 @@ class preprocessing_testing():
             lambda x: self.mapping_list[1][x])
         self.df['Vehicle_Age'] = self.df['Vehicle_Age'].apply(
             lambda x: self.mapping_list[2][x])
-        
+
         # add age groups
         self.df['Age_group'] = pd.cut(self.df['Age'], bins=range(10, 90, 10))
         self.df['Age_group_codes'] = self.df['Age_group'].cat.codes
-
 
         # add special_region
         self.df['special_region'] = 0
@@ -188,8 +188,10 @@ class preprocessing_testing():
 
         # add interesting_score
         self.df['interesting_score'] = 1.5*self.df['Vehicle_Damage'] - \
-            2*self.df['Previously_Insured'] +0.5*self.df['Driving_License'] + 0.5*self.df['Gender'] - self.df['Vehicle_Age'] + self.df['special_region'] + self.df['special_Policy_Sales_Channel']
-        
+            2*self.df['Previously_Insured'] + 0.5*self.df['Driving_License'] + 0.5*self.df['Gender'] - \
+            self.df['Vehicle_Age'] + self.df['special_region'] + \
+            self.df['special_Policy_Sales_Channel']
+
         # for target in label_target:
         #     try:
         #         self.df[target] = self.df[target].apply(
@@ -236,7 +238,7 @@ class preprocessing_testing():
         minmax1 = MinMaxScaler()
         samiliar_cluster = minmax1.fit_transform(
             np.array(self.df[[
-                'Annual_Premium', 'Gender', 'Vintage','Vehicle_Age'
+                'Annual_Premium', 'Gender', 'Vintage', 'Vehicle_Age'
             ]]))
         GMcluster = mixture.GaussianMixture(n_components=2,
                                             covariance_type='full',
