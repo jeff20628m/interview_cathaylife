@@ -1,7 +1,6 @@
 import lightgbm
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score, precision_score, recall_score, classification_report
 from preprocessing import preprocessing_training, preprocessing_testing
-from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedKFold
 import warnings
 warnings.filterwarnings("ignore")
@@ -27,17 +26,11 @@ class modeling():
 
         self.df_test = pre_test.preprocessing()
 
-        self.df_test = self.df_test.drop([
-            'id', 'Vehicle_Damage', 'Age_group_codes', 'special_region',
-            'special_Policy_Sales_Channel'
-        ],
-                                         axis=1)
+        self.df_test = self.df_test.drop(
+            ['id', 'Age_group_codes', 'special_Policy_Sales_Channel'], axis=1)
 
-        self.df = self.df.drop([
-            'id', 'Vehicle_Damage', 'Age_group_codes', 'special_region',
-            'special_Policy_Sales_Channel'
-        ],
-                               axis=1)
+        self.df = self.df.drop(
+            ['id', 'Age_group_codes', 'special_Policy_Sales_Channel'], axis=1)
 
         return self.df, self.df_test
 
@@ -97,7 +90,6 @@ class modeling():
             n_jobs=-1)  # The parameter here are selected by manual tuning
 
         fold = StratifiedKFold(n_splits=5, shuffle=True)
-        score = []
         for train_index, test_index in fold.split(df_final_, Target):
             Xf_train, Xf_test = df_final_.iloc[train_index], df_final_.iloc[
                 test_index]
@@ -112,9 +104,6 @@ class modeling():
                           verbose=200,
                           early_stopping_rounds=200)
 
-            pred_proba = lgb.predict_proba(df_test)[:, 1]
-            score.append(roc_auc_score(y_test, pred_proba))
-
         self.model_eval(lgb, df_final_, df_test, Target, y_test)
 
-        return lgb, score
+        return lgb
