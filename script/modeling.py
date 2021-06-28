@@ -20,17 +20,17 @@ class modeling():
 
         pre_train = preprocessing_training(self.train)
 
-        self.df, map_list = pre_train.preprocessing()
+        self.df, map_list, GMcluster_diff, GMcluster_same, GMcluster_all = pre_train.preprocessing(
+        )
 
-        pre_test = preprocessing_testing(self.test, map_list)
+        pre_test = preprocessing_testing(self.test, map_list, GMcluster_diff,
+                                         GMcluster_same, GMcluster_all)
 
         self.df_test = pre_test.preprocessing()
 
-        self.df_test = self.df_test.drop(
-            ['id', 'Age_group_codes', 'special_Policy_Sales_Channel'], axis=1)
+        self.df_test = self.df_test.drop('id', axis=1)
 
-        self.df = self.df.drop(
-            ['id', 'Age_group_codes', 'special_Policy_Sales_Channel'], axis=1)
+        self.df = self.df.drop('id', axis=1)
 
         return self.df, self.df_test
 
